@@ -26,6 +26,10 @@ app.get('/stuff', function(req,res){
   res.send(words);
 });
 
+app.post('/jugglers',function(req,res){
+  console.log(req.route.stack[0]);
+});
+
 app.listen(port, function(){
 console.log("sup");
 });
