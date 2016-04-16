@@ -30,58 +30,89 @@ $.ajax({
 // console.log(circuits)
 // console.log(jugglers)
   // takes the array of strings and transforms it into useable objects
-  for(var b = 0; b < circuits.length; b++){
-      var c = circuits[b].split(' ');
-      circuits[b] = {
-          H:parseInt(c[2].replace("H:",'')),
-          E:parseInt(c[3].replace("E:",'')),
-          P:parseInt(c[4].replace("P:",'')),
-          assigned: []
-      };
-  }
+  var empty = [];
+  circuits.reduce(function(all, item, index){
+      var c  = item.split(' ');
+      topScores[index] = [];
+      all.push({
+        H:parseInt(c[2].replace("H:",'')),
+       E:parseInt(c[3].replace("E:",'')),
+       P:parseInt(c[4].replace("P:",'')),
+       assigned: []
+     });
+     return all;
+  },empty);
+  circuits = empty;
 
-// takes the array of jugglers and transforms the data into useable objects
-  for(var g = 0; g < jugglers.length; g++){
-      var q = jugglers[g].split(' ');
-      jugglers[g] = {
-          id:g,
-          H:parseInt(q[2].replace("H:",'')),
-          E:parseInt(q[3].replace("E:",'')),
-          P:parseInt(q[4].replace("P:",'')),
-          cPref:q[5].replace(/C/g,'').split(','),
-          pref:q[5].replace(/C/g,'').split(','),
-          scores: []
-      };
-  }
-  circuits.forEach(function(i){
-    topScores.push([]);
-  });
+  empty = [];
+  // takes the array of jugglers and transforms the data into useable objects
+  jugglers.reduce(function(all, item, index){
+    var c  = item.split(' ');
+    all.push({
+      id:index,
+      H:parseInt(c[2].replace("H:",'')),
+      E:parseInt(c[3].replace("E:",'')),
+      P:parseInt(c[4].replace("P:",'')),
+      cPref:c[5].replace(/C/g,'').split(','),
+      pref:c[5].replace(/C/g,'').split(','),
+      scores: []
+    });
+    return all;
+  },empty);
+jugglers = empty;
+empty = [];
+
+// console.log(jugglers);
+
 
   // calculates the dot product for each juggler based on stored according to preference
-  for (var f = 0; f < jugglers.length; f++){
-    for(var e = 0; e < jugglers[f].cPref.length; e++){
-      var score = (jugglers[f].H * circuits[parseInt(jugglers[f].cPref[e])].H)+(jugglers[f].E * circuits[parseInt(jugglers[f].cPref[e])].E)+(jugglers[f].P * circuits[parseInt(jugglers[f].cPref[e])].P);
-      // console.log(score);
-      jugglers[f].scores.push(score);
-      // topScores[parseInt(jugglers[f].cPref[e])].push({
-      //       score: score,
-      //       jugg: f
-      //     });
-    }
-    for(var t = 0; t < circuits.length; t++){
-        if(!isInArray(t.toString(), jugglers[f].cPref)){
-          var scor = (jugglers[f].H * circuits[t].H)+(jugglers[f].E * circuits[t].E)+(jugglers[f].P * circuits[t].P);
-          jugglers[f].scores.push(scor);
-//           // jugglers[f].cPref.push(t.toString());
-          // topScores[t].push({
-          //       score: scor,
-          //       jugg: f
-          //     });
-        }
-      }
-  }
+//   for (var f = 0; f < jugglers.length; f++){
+//     for(var e = 0; e < jugglers[f].cPref.length; e++){
+//       var score = (jugglers[f].H * circuits[parseInt(jugglers[f].cPref[e])].H)+(jugglers[f].E * circuits[parseInt(jugglers[f].cPref[e])].E)+(jugglers[f].P * circuits[parseInt(jugglers[f].cPref[e])].P);
+//       // console.log(score);
+//       jugglers[f].scores.push(score);
+//       // topScores[parseInt(jugglers[f].cPref[e])].push({
+//       //       score: score,
+//       //       jugg: f
+//       //     });
+//     }
+//     for(var t = 0; t < circuits.length; t++){
+//         if(!isInArray(t.toString(), jugglers[f].cPref)){
+//           var scor = (jugglers[f].H * circuits[t].H)+(jugglers[f].E * circuits[t].E)+(jugglers[f].P * circuits[t].P);
+//           jugglers[f].scores.push(scor);
+// //           // jugglers[f].cPref.push(t.toString());
+//           // topScores[t].push({
+//           //       score: scor,
+//           //       jugg: f
+//           //     });
+//         }
+//       }
+//   }
+  // console.log(jugglers);
 //
 //
+
+jugglers.reduce(function(all, item, index){
+  var thescore = [];
+
+      circuits.reduce(function(all1, item1, index1){
+          var score = (item.H * item1.H)+(item.E * item1.E)+(item.P * item1.P);
+          topScores[index1].push({
+                        score: score,
+                        jugg: index
+                      })
+        all1.push(score);
+        return all1;
+      },thescore);
+
+  item.scores = thescore;
+  all.push(item);
+  return all;
+},empty);
+
+jugglers = empty;
+
+
 //   // for(var n = 0; n < jugglers.length; n++){
 //   //   for(var t = 0; t < circuits.length; t++){
 //   //     if(!isInArray(t.toString(), jugglers[n].cPref)){
@@ -235,7 +266,7 @@ $.ajax({
 //
 //
 // console.log(assignments);
-console.log(jugglers);
+// console.log(jugglers);
 // // console.log(response);
 // // console.log(list[0].concat(assignments[0]));
 // // console.log(list[1].concat(assignments[1]));
