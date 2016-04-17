@@ -33,7 +33,6 @@ $.ajax({
   var empty = [];
   circuits.reduce(function(all, item, index){
       var c  = item.split(' ');
-      topScores[index] = [];
       all.push({
         H:parseInt(c[2].replace("H:",'')),
        E:parseInt(c[3].replace("E:",'')),
@@ -62,45 +61,11 @@ $.ajax({
 jugglers = empty;
 empty = [];
 
-// console.log(jugglers);
-
-
-  // calculates the dot product for each juggler based on stored according to preference
-//   for (var f = 0; f < jugglers.length; f++){
-//     for(var e = 0; e < jugglers[f].cPref.length; e++){
-//       var score = (jugglers[f].H * circuits[parseInt(jugglers[f].cPref[e])].H)+(jugglers[f].E * circuits[parseInt(jugglers[f].cPref[e])].E)+(jugglers[f].P * circuits[parseInt(jugglers[f].cPref[e])].P);
-//       // console.log(score);
-//       jugglers[f].scores.push(score);
-//       // topScores[parseInt(jugglers[f].cPref[e])].push({
-//       //       score: score,
-//       //       jugg: f
-//       //     });
-//     }
-//     for(var t = 0; t < circuits.length; t++){
-//         if(!isInArray(t.toString(), jugglers[f].cPref)){
-//           var scor = (jugglers[f].H * circuits[t].H)+(jugglers[f].E * circuits[t].E)+(jugglers[f].P * circuits[t].P);
-//           jugglers[f].scores.push(scor);
-// //           // jugglers[f].cPref.push(t.toString());
-//           // topScores[t].push({
-//           //       score: scor,
-//           //       jugg: f
-//           //     });
-//         }
-//       }
-//   }
-  // console.log(jugglers);
-//
-//
-
 jugglers.reduce(function(all, item, index){
   var thescore = [];
 
       circuits.reduce(function(all1, item1, index1){
           var score = (item.H * item1.H)+(item.E * item1.E)+(item.P * item1.P);
-          topScores[index1].push({
-                        score: score,
-                        jugg: index
-                      })
         all1.push(score);
         return all1;
       },thescore);
@@ -111,6 +76,68 @@ jugglers.reduce(function(all, item, index){
 },empty);
 
 jugglers = empty;
+// console.log(jugglers);
+// console.log(empty);
+
+
+//What do i want?//
+// Loop through the circuits array once..
+// find jugglers that have the circuit as a first preference.
+// Rank the found jugglers by score for that circuit
+// Place them into the assigned array for that circuit by rank
+// remove them from jugglers array if they are assigned
+// remove the circuit prefrence from the remaining jugglers that have the circuit as a preference (regardless of position) if the circuit is filled (6)
+// if all jugglers no longer have a preference place jugglers by high score
+// find top (6) scores per remaining assigned circuits
+// place by rank consider the last placed juggler score as the highest score all other placed jugglers should be less than
+
+
+
+var ref = [];
+// jugglers.reduce(function(all, item, index){
+//   item.cPref.find(function(pr, in){
+//     if(pr === "10") item.splice(in, 1);
+//   });
+      // all.push(item);
+//   return all;
+// }, jugglers);
+//
+// console.log(ref);
+
+// empty.reduce(function(all, item, index){
+//   if(item.cPref.length > 0) all.push(item);
+//   return all;
+// },ref);
+var firstPref = [];
+// circuits.map(function(cir, num){
+
+  empty.reduce(function(all, item, index){
+    if(item.cPref[0] === "100") all.push(item);
+    return all;
+  },firstPref);
+
+firstPref.sort(function(a,b){return b.scores[100] - a.scores[100];});
+var amt = firstPref.length;
+console.log(amt);
+for(var i = 0; i < amt; i++){
+  if(circuits[0].assigned.length < (jugglers.length / circuits.length)) {
+    var assignee = firstPref.shift();
+    circuits[0].assigned.push(assignee);
+    assignee.scores = null;
+    assignee.cPref = null;
+  }
+
+}
+
+console.log(circuits[0].assigned);
+console.log(firstPref);
+// console.log(empty.length);
+console.log(empty);
+
+
+
+// });
+// console.log(circuits);
 
 
 //   // for(var n = 0; n < jugglers.length; n++){
